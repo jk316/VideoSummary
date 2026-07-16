@@ -36,6 +36,7 @@ class MainWindow(QMainWindow):
         reload_config,
         worker,
         reporter: SignalReporter,
+        ytdlp_path: Path,
     ) -> None:
         super().__init__()
         self.setWindowTitle("VideoSummary")
@@ -46,6 +47,7 @@ class MainWindow(QMainWindow):
         self._reload_config = reload_config
         self._worker = worker
         self._reporter = reporter
+        self._ytdlp_path = ytdlp_path
 
         # --- central widget ---
         central = QWidget()
@@ -141,7 +143,7 @@ class MainWindow(QMainWindow):
             from app.config.schema import DownloaderConfig, NetworkConfig
             from app.downloader.ytdlp import YtDlpDownloader
 
-            dl = YtDlpDownloader(Path("yt-dlp.exe"), DownloaderConfig(), NetworkConfig())
+            dl = YtDlpDownloader(self._ytdlp_path, DownloaderConfig(), NetworkConfig())
             result = dl.update_binary()
             QMessageBox.information(self, "yt-dlp 更新", result)
         except VideoSummaryError as exc:

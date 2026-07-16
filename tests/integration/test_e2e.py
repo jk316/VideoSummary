@@ -51,8 +51,13 @@ class TestE2ESubtitlePath:
         chunker = TranscriptChunker(100, 0, _CharCounter())
         downloader = _FakeDownloader(has_subtitles=True)
         pipeline = SummaryPipeline(
-            downloader, _FakeAudio(), _FakeRecognizer(),
-            chunker, _FakeSummarizer(), cache, config,
+            downloader,
+            _FakeAudio(),
+            _FakeRecognizer(),
+            chunker,
+            _FakeSummarizer(),
+            cache,
+            config,
         )
         reporter = _FakeReporter()
 
@@ -89,8 +94,12 @@ class TestE2ESubtitlePath:
 
         cache = CacheManager(tmp_path / "cache")
         pipeline = SummaryPipeline(
-            _FakeDownloader(has_subtitles=True), _FakeAudio(), _FakeRecognizer(),
-            TranscriptChunker(100, 0, _CharCounter()), _FakeSummarizer(), cache,
+            _FakeDownloader(has_subtitles=True),
+            _FakeAudio(),
+            _FakeRecognizer(),
+            TranscriptChunker(100, 0, _CharCounter()),
+            _FakeSummarizer(),
+            cache,
             _make_config(str(tmp_path / "out")),
         )
         ref = VideoRef(site=Site.YOUTUBE, video_id="e2e-test", url="https://x")
@@ -117,8 +126,13 @@ class TestE2ESttPath:
         chunker = TranscriptChunker(100, 0, _CharCounter())
         downloader = _FakeDownloader(has_subtitles=False)
         pipeline = SummaryPipeline(
-            downloader, _FakeAudio(), _FakeRecognizer(),
-            chunker, _FakeSummarizer(), cache, config,
+            downloader,
+            _FakeAudio(),
+            _FakeRecognizer(),
+            chunker,
+            _FakeSummarizer(),
+            cache,
+            config,
         )
         reporter = _FakeReporter()
 
@@ -152,8 +166,13 @@ class TestE2ESttPath:
 
         # 第一次
         p1 = SummaryPipeline(
-            _FakeDownloader(has_subtitles=False), _FakeAudio(), _FakeRecognizer(),
-            chunker, _FakeSummarizer(), cache, config,
+            _FakeDownloader(has_subtitles=False),
+            _FakeAudio(),
+            _FakeRecognizer(),
+            chunker,
+            _FakeSummarizer(),
+            cache,
+            config,
         )
         r1 = p1.run(ref, _FakeReporter(), CancellationToken())
 
@@ -161,8 +180,13 @@ class TestE2ESttPath:
         recognizer2 = _FakeRecognizer()
         downloader2 = _FakeDownloader(has_subtitles=False)
         p2 = SummaryPipeline(
-            downloader2, _FakeAudio(), recognizer2,
-            TranscriptChunker(100, 0, _CharCounter()), _FakeSummarizer(), cache, config,
+            downloader2,
+            _FakeAudio(),
+            recognizer2,
+            TranscriptChunker(100, 0, _CharCounter()),
+            _FakeSummarizer(),
+            cache,
+            config,
         )
         r2 = p2.run(ref, _FakeReporter(), CancellationToken())
 
@@ -186,16 +210,26 @@ class TestFullPipelineResilience:
 
         # 第一次：完成后验证
         p1 = SummaryPipeline(
-            _FakeDownloader(has_subtitles=True), _FakeAudio(), _FakeRecognizer(),
-            chunker, _FakeSummarizer(), cache, config,
+            _FakeDownloader(has_subtitles=True),
+            _FakeAudio(),
+            _FakeRecognizer(),
+            chunker,
+            _FakeSummarizer(),
+            cache,
+            config,
         )
         r1 = p1.run(ref, _FakeReporter(), CancellationToken())
 
         # 第二次：用全新的 downloader（验证没重复下载）
         downloader2 = _FakeDownloader(has_subtitles=True)
         p2 = SummaryPipeline(
-            downloader2, _FakeAudio(), _FakeRecognizer(),
-            TranscriptChunker(100, 0, _CharCounter()), _FakeSummarizer(), cache, config,
+            downloader2,
+            _FakeAudio(),
+            _FakeRecognizer(),
+            TranscriptChunker(100, 0, _CharCounter()),
+            _FakeSummarizer(),
+            cache,
+            config,
         )
         r2 = p2.run(ref, _FakeReporter(), CancellationToken())
 

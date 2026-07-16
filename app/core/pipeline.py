@@ -321,8 +321,6 @@ def _effective_prompt_text(config):
 
     lang = str(config.summary.language)
     defaults = get_default_prompts(lang)
-    return (
-        config.summary.map_prompt
-        or defaults["map"] + config.summary.reduce_prompt
-        or defaults["reduce"]
-    )
+    map_text = config.summary.map_prompt or defaults["map"]
+    reduce_text = config.summary.reduce_prompt or defaults["reduce"]
+    return map_text + reduce_text

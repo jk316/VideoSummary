@@ -106,6 +106,7 @@ def main() -> None:
         reload_config=reload,
         worker=worker,
         reporter=reporter,
+        ytdlp_path=ytdlp,
     )
     window.show()
 
@@ -117,15 +118,24 @@ def main() -> None:
 
 
 def _resolve_binary(name: str, configured: str) -> Path:
+    import shutil
+
     if configured:
         return Path(configured)
-    bundled = get_bin_dir() / name
-    if bundled.is_file():
-        return bundled
-    # 开发态：回退到 packaging/bin/
+    # 优先用户 writable 目录（已被拷贝到 %APPDATA%/bin/）
+    user_bin = get_bin_dir() / name
+    if user_bin.is_file():
+        return user_bin
+    # 首次运行：从随包/开发 bin 目录拷贝到用户 writable 目录
     from app.utils.paths import get_bundle_dir
 
-    return get_bundle_dir() / "bin" / name
+    source = get_bundle_dir() / "bin" / name
+    if source.is_file():
+        user_bin.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, user_bin)
+        logger.info("首次运行：已拷贝 %s → %s", name, user_bin)
+        return user_bin
+    return source  # 开发态回退，后续 check_available 会报错
 
 
 if __name__ == "__main__":
