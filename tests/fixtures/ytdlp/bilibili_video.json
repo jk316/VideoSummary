@@ -1,0 +1,15 @@
+{
+  "id": "BV1GJ411x7h7",
+  "extractor": "BiliBili",
+  "extractor_key": "BiliBili",
+  "title": "【测试】示例视频：标题带非法字符 ? * |",
+  "duration": 120.5,
+  "uploader": "某UP主",
+  "webpage_url": "https://www.bilibili.com/video/BV1GJ411x7h7",
+  "subtitles": {
+    "zh-Hans": [
+      {"ext": "json", "url": "https://example.com/zh.json"}
+    ]
+  },
+  "automatic_captions": {}
+}

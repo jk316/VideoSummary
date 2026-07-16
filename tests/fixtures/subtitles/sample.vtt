@@ -1,0 +1,15 @@
+WEBVTT
+Kind: captions
+Language: en
+
+NOTE 这是注释块，应被跳过
+
+cue-id-1
+00:00:00.000 --> 00:00:02.500 align:start position:0%
+Hello <b>world</b> &amp; friends
+
+00:00:02.500 --> 00:00:05.000
+This is the <00:00:03.100><c>second</c> cue
+
+01:02:03.400 --> 01:02:05.900
+Long-form timestamp cue

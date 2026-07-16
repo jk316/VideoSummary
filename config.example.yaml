@@ -1,0 +1,43 @@
+network:
+  proxy: ''
+  use_system_proxy: true
+downloader:
+  ytdlp_path: ''
+  cookies_file: ''
+  retries: 3
+  socket_timeout: 30
+audio:
+  ffmpeg_path: ''
+subtitle:
+  prefer_langs:
+  - zh-Hans
+  - zh
+  - en
+  allow_auto: true
+stt:
+  model_size: small
+  device: cpu
+  compute_type: int8
+  vad_filter: true
+  language: ''
+  hf_endpoint: https://hf-mirror.com
+llm:
+  base_url: https://api.openai.com/v1
+  api_key: ''
+  model: gpt-4o-mini
+  timeout_seconds: 120
+  max_retries: 3
+  max_concurrency: 4
+summary:
+  language: zh
+  chunk_max_tokens: 3000
+  chunk_overlap_tokens: 200
+  map_prompt: ''
+  reduce_prompt: ''
+paths:
+  output_dir: ''
+  cache_dir: ''
+cache:
+  keep_intermediate_audio: false
+logging:
+  level: INFO

@@ -1,0 +1,22 @@
+{
+  "id": "dQw4w9WgXcQ",
+  "extractor": "youtube",
+  "extractor_key": "Youtube",
+  "title": "Never Gonna Give You Up",
+  "duration": 213.0,
+  "uploader": "Rick Astley",
+  "channel": "Rick Astley",
+  "webpage_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+  "subtitles": {
+    "en": [
+      {"ext": "json3", "url": "https://example.com/en.json3"},
+      {"ext": "vtt", "url": "https://example.com/en.vtt"},
+      {"ext": "srt", "url": "https://example.com/en.srt"}
+    ]
+  },
+  "automatic_captions": {
+    "zh-Hans": [
+      {"ext": "json3", "url": "https://example.com/zh.json3"}
+    ]
+  }
+}

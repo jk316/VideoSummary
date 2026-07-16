@@ -1,0 +1,19 @@
+# 依赖与虚拟环境
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+
+# 测试与工具产物
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+
+# 打包产物
+build/
+dist/
+
+# 运行时数据（正式数据在 %APPDATA%/VideoSummary，此处防误放）
+logs/
+cache/

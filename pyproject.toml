@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "videosummary"
+version = "0.1.0"
+description = "Windows 桌面视频内容总结工具：URL → 字幕/STT → LLM 总结 → Markdown"
+requires-python = ">=3.12"
+dependencies = [
+    "pyyaml>=6.0",
+    "tiktoken>=0.7",
+    "openai>=1.60",
+    "httpx>=0.28",
+    "pyside6>=6.11.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.5",
+    "black>=24.0",
+    "pytest-asyncio>=1.4.0",
+    "pytest-qt>=4.5.0",
+    "pyinstaller>=6.21.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "SIM", "RUF"]
+# 项目使用中文 docstring/注释，全角标点为预期用法
+ignore = ["RUF001", "RUF002", "RUF003"]
+
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-m 'not live'"
+markers = [
+    "live: 需要真实网络/外部服务的用例（默认跳过，用 -m live 运行）",
+]
+
+[tool.coverage.run]
+source = ["app"]
