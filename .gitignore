@@ -13,6 +13,7 @@ htmlcov/
 # 打包产物
 build/
 dist/
+packaging/bin/
 
 # 运行时数据（正式数据在 %APPDATA%/VideoSummary，此处防误放）
 /logs/
