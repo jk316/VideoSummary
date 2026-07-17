@@ -15,6 +15,9 @@ build/
 dist/
 packaging/bin/
 
+# 环境变量（含 API Key，不入 git）
+.env
+
 # 运行时数据（正式数据在 %APPDATA%/VideoSummary，此处防误放）
 /logs/
 /cache/

@@ -2,8 +2,10 @@
 
 import logging
 import sys
+from dataclasses import replace
 from pathlib import Path
 
+from dotenv import dotenv_values
 from PySide6.QtWidgets import QApplication
 
 from app.audio.processor import AudioProcessor
@@ -23,6 +25,7 @@ from app.ui.worker import QueueWorker
 from app.utils.logging_setup import setup_logging
 from app.utils.paths import (
     get_bin_dir,
+    get_bundle_dir,
     get_cache_dir,
     get_config_path,
     get_logs_dir,
@@ -38,9 +41,14 @@ def main() -> None:
     setup_logging(get_logs_dir())
     logger.info("VideoSummary 启动")
 
-    # 配置
+    # 配置（config.yaml）
     config_path = get_config_path()
     config = load_config(config_path)
+
+    # .env 文件覆盖（API Key 等敏感信息建议通过 .env 管理，不入 git）
+    config = _merge_dotenv(config)
+    logger.info("LLM base_url=%s model=%s", config.llm.base_url, config.llm.model)
+
     models_dir = get_models_dir()
     cache_dir = Path(config.paths.cache_dir) if config.paths.cache_dir else get_cache_dir()
 
@@ -117,6 +125,47 @@ def main() -> None:
         worker.wait(3000)
 
 
+def _merge_dotenv(config):
+    """从项目根目录或 exe 同级目录加载 .env，覆盖 config.yaml 中的 LLM 配置。
+
+    只有 .env 中非空的值才会覆盖，config.yaml 中已配置的值优先保留。
+    """
+    from app.utils.paths import is_frozen
+
+    if is_frozen():
+        env_path = Path(sys.executable).resolve().parent / ".env"
+    else:
+        env_path = Path(__file__).resolve().parents[1] / ".env"
+
+    if not env_path.is_file():
+        logger.debug("未找到 .env 文件，使用 config.yaml 中的 LLM 配置")
+        return config
+
+    values = dotenv_values(str(env_path))
+    llm = config.llm
+    updated = False
+
+    url = values.get("LLM_BASE_URL", "").strip()
+    if url and not llm.base_url:
+        llm = replace(llm, base_url=url)
+        updated = True
+
+    key = values.get("LLM_API_KEY", "").strip()
+    if key and not llm.api_key:
+        llm = replace(llm, api_key=key)
+        updated = True
+
+    model = values.get("LLM_MODEL", "").strip()
+    if model and llm.model == "gpt-4o-mini":
+        llm = replace(llm, model=model)
+        updated = True
+
+    if updated:
+        logger.info("已从 .env 加载 LLM 配置: %s", env_path)
+        config = replace(config, llm=llm)
+    return config
+
+
 def _resolve_binary(name: str, configured: str) -> Path:
     import shutil
 
@@ -127,7 +176,6 @@ def _resolve_binary(name: str, configured: str) -> Path:
     if user_bin.is_file():
         return user_bin
     # 首次运行：从随包/开发 bin 目录拷贝到用户 writable 目录
-    from app.utils.paths import get_bundle_dir
 
     source = get_bundle_dir() / "bin" / name
     if source.is_file():
