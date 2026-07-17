@@ -199,7 +199,7 @@ class TestModelLoading:
             _make_recognizer(tmp_path).transcribe(
                 audio_file, progress=lambda f, m: None, cancel=CancellationToken()
             )
-        assert "镜像" in exc_info.value.user_message
+        assert "下载" in exc_info.value.user_message or "加载" in exc_info.value.user_message
 
     def test_missing_package_maps_to_stt_error(
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path, audio_file: Path

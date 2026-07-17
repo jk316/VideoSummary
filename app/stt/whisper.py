@@ -96,9 +96,10 @@ class WhisperRecognizer(SpeechRecognizer):
                     download_root=str(self._models_dir),
                 )
             except Exception as exc:
+                hint = _failure_hint(str(exc))
                 raise SttError(
                     f"Whisper 模型加载失败 ({self._config.model_size}): {exc}",
-                    user_message="语音模型下载/加载失败，请检查网络、代理或镜像设置。",
+                    user_message=f"语音模型下载/加载失败：{hint}",
                 ) from exc
         logger.info("Whisper 模型已就绪: %s (%s)", self._config.model_size, self._config.device)
         return self._model
@@ -169,3 +170,24 @@ def _hf_env(endpoint: str, proxy: str | None):
                 os.environ.pop(key, None)
             else:
                 os.environ[key] = value
+
+
+def _failure_hint(message: str) -> str:
+    """将常见错误模式翻译为用户导向的提示。"""
+    lowered = message.lower()
+    if any(k in lowered for k in ("connect", "resolve", "getaddrinfo", "timed out", "timeout")):
+        return "无法连接模型下载服务器（网络不通或需要代理），请在设置中配置代理后重试"
+    if any(k in lowered for k in ("ssl", "certificate")):
+        return "SSL 连接失败（代理或防火墙干扰），请在设置中配置代理后重试"
+    if any(k in lowered for k in ("401", "403", "unauthorized", "forbidden")):
+        return "模型下载被拒绝（镜像或网络限制），请尝试更换 HF 镜像地址或配置代理"
+    if any(k in lowered for k in ("404", "not found")):
+        return "模型文件未找到（镜像可能不完整），请尝试更换 HF 镜像地址"
+    if any(k in lowered for k in ("disk", "space", "storage", "no space")):
+        return "磁盘空间不足（模型约 500MB），请清理后重试"
+    if any(k in lowered for k in ("permission", "denied")):
+        return "无写入权限，请检查数据目录权限"
+    if any(k in lowered for k in ("no module", "import")):
+        return "语音识别组件未安装，请重新运行安装程序"
+    # 返回简短摘要
+    return f"请检查网络、代理或镜像设置（{message[:80]}）"
