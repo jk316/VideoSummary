@@ -12,14 +12,17 @@ from app.utils.logging_setup import redact_secrets, setup_logging
 
 
 class TestPaths:
-    def test_bundle_dir_frozen_is_exe_parent(
+    def test_bundle_dir_frozen_uses_meipass(
         self, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
     ) -> None:
-        exe = tmp_path / "dist" / "VideoSummary.exe"
-        exe.parent.mkdir(parents=True)
+        internal = tmp_path / "dist" / "VideoSummary" / "_internal"
+        internal.mkdir(parents=True)
         monkeypatch.setattr(sys, "frozen", True, raising=False)
-        monkeypatch.setattr(sys, "executable", str(exe))
-        assert paths.get_bundle_dir() == exe.parent.resolve()
+        sys._MEIPASS = str(internal)  # type: ignore[attr-defined]
+        try:
+            assert paths.get_bundle_dir() == internal.resolve()
+        finally:
+            del sys._MEIPASS  # type: ignore[attr-defined]
 
     def test_bundle_dir_dev_points_to_packaging(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.delattr(sys, "frozen", raising=False)

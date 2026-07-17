@@ -15,11 +15,11 @@ def is_frozen() -> bool:
 def get_bundle_dir() -> Path:
     """随包资源目录（bin/ffmpeg.exe、yt-dlp.exe 种子副本所在）。
 
-    onedir 模式下为 exe 所在目录（非 onefile 的 ``_MEIPASS``）；
+    onedir 模式下为 ``_MEIPASS``（即 ``_internal/``，PyInstaller datas 落点）；
     开发态指向仓库 ``packaging/`` 目录。
     """
     if is_frozen():
-        return Path(sys.executable).resolve().parent
+        return Path(sys._MEIPASS)  # type: ignore[attr-defined]
     return _repo_root() / "packaging"
 
 
